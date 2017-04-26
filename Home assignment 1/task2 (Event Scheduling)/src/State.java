@@ -18,11 +18,17 @@ class State extends GlobalSimulation {
 		case ARRIVALA:
 			arrivalA();
 			break;
+		case ARRIVALAEXP:
+			arrivalAExp();
+			break;
 		case ARRIVALB:
 			arrivalB();
 			break;
 		case READY:
 			ready();
+			break;
+		case READYEXP:
+			readyExp();
 			break;
 		case MEASURE:
 			measure();
@@ -44,6 +50,14 @@ class State extends GlobalSimulation {
 		insertEvent(ARRIVALA, time + expDist((double) 1 / 150));
 	}
 
+	private void arrivalAExp() {
+		if (numberInQueue == 0)
+			insertEvent(READYEXP, time + 0.002);
+		numberInQueue++;
+		buffer.addFirst("a");
+		insertEvent(ARRIVALAEXP, time + expDist((double) 1 / 150));
+	}
+
 	private void arrivalB() {
 		if (numberInQueue == 0)
 			insertEvent(READY, time + 0.004);
@@ -57,10 +71,22 @@ class State extends GlobalSimulation {
 			String temp = buffer.poll();
 			if (temp.equals("a")) {
 				insertEvent(READY, time + 0.002);
-				insertEvent(ARRIVALB, time + 0.002 + 1.0); // Serving time +
-															// delay
+				insertEvent(ARRIVALB, time + 0.002 + 1.0);
 			} else {
 				insertEvent(READY, time + 0.004);
+			}
+		}
+	}
+
+	private void readyExp() {
+		numberInQueue--;
+		if (numberInQueue > 0) {
+			String temp = buffer.poll();
+			if (temp.equals("a")) {
+				insertEvent(READYEXP, time + 0.002);
+				insertEvent(ARRIVALB, time + 0.002 + expDist(1));
+			} else {
+				insertEvent(READYEXP, time + 0.004);
 			}
 		}
 	}

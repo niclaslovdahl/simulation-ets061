@@ -6,6 +6,7 @@ public class MainSimulation extends GlobalSimulation {
 
 	public static void simulate(int noServers, int serviceTime, double interarrival, double timeMeasurements,
 			String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+
 		Event actEvent;
 		State actState = new State(); // The state that shoud be used
 		// Some events must be put in the event list at the beginning
@@ -25,7 +26,10 @@ public class MainSimulation extends GlobalSimulation {
 			actState.treatEvent(actEvent);
 		}
 
-		PrintWriter pw = new PrintWriter(new File(fileName), "UTF-8");
+		// Creating file in res directory
+		File file = new File("res/" + fileName);
+		file.getParentFile().mkdirs();
+		PrintWriter pw = new PrintWriter(file, "UTF-8");
 
 		for (String s : actState.noCustomers) {
 			System.out.println(s);

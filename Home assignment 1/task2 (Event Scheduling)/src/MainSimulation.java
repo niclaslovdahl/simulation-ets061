@@ -3,7 +3,7 @@ import java.io.*;
 
 public class MainSimulation extends GlobalSimulation {
 
-	public static final int PRIOA = 1, PRIOB = 2, EXP = 3;
+	public static final int PRIOB = 1, EXP = 2, PRIOA = 3;
 
 	public static void simulate(int type) {
 		Event actEvent;
@@ -11,16 +11,18 @@ public class MainSimulation extends GlobalSimulation {
 		// Some events must be put in the event list at the beginning
 		String typeString = "";
 
-		if (type == PRIOA) {
+		if (type == PRIOB) {
 			insertEvent(ARRIVALA, 0);
 			insertEvent(MEASURE, 5);
-			typeString = "(Prio A)";
-		} else if (type == PRIOB) {
-
+			typeString = "(Prio B)";
 		} else if (type == EXP) {
 			insertEvent(ARRIVALAEXP, 0);
 			insertEvent(MEASURE, 5);
 			typeString = "(Prio A and Exp delay)";
+		} else if (type == PRIOA) {
+			insertEvent(ARRIVALAPRIOA, 0);
+			insertEvent(MEASURE, 0);
+			typeString = "(Prio A)";
 		}
 
 		// The main simulation loop
@@ -36,7 +38,8 @@ public class MainSimulation extends GlobalSimulation {
 	}
 
 	public static void main(String[] args) throws IOException {
-		simulate(PRIOA);
+		simulate(PRIOB);
 		simulate(EXP);
+		simulate(PRIOA);
 	}
 }

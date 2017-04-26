@@ -18,17 +18,29 @@ class State extends GlobalSimulation {
 		case ARRIVALA:
 			arrivalA();
 			break;
-		case ARRIVALAEXP:
-			arrivalAExp();
-			break;
 		case ARRIVALB:
 			arrivalB();
 			break;
 		case READY:
 			ready();
 			break;
+		case ARRIVALAEXP:
+			arrivalAExp();
+			break;
+		case ARRIVALBEXP:
+			arrivalBExp();
+			break;
 		case READYEXP:
 			readyExp();
+			break;
+		case ARRIVALAPRIOA:
+			arrivalAPrioA();
+			break;
+		case ARRIVALBPRIOA:
+			arrivalBPrioA();
+			break;
+		case READYPRIOA:
+			readyPrioA();
 			break;
 		case MEASURE:
 			measure();
@@ -48,14 +60,6 @@ class State extends GlobalSimulation {
 		numberInQueue++;
 		buffer.addFirst("a");
 		insertEvent(ARRIVALA, time + expDist((double) 1 / 150));
-	}
-
-	private void arrivalAExp() {
-		if (numberInQueue == 0)
-			insertEvent(READYEXP, time + 0.002);
-		numberInQueue++;
-		buffer.addFirst("a");
-		insertEvent(ARRIVALAEXP, time + expDist((double) 1 / 150));
 	}
 
 	private void arrivalB() {
@@ -78,15 +82,58 @@ class State extends GlobalSimulation {
 		}
 	}
 
+	private void arrivalAExp() {
+		if (numberInQueue == 0)
+			insertEvent(READYEXP, time + 0.002);
+		numberInQueue++;
+		buffer.addFirst("a");
+		insertEvent(ARRIVALAEXP, time + expDist((double) 1 / 150));
+	}
+
+	private void arrivalBExp() {
+		if (numberInQueue == 0)
+			insertEvent(READYEXP, time + 0.004);
+		numberInQueue++;
+		buffer.addLast("b");
+	}
+
 	private void readyExp() {
 		numberInQueue--;
 		if (numberInQueue > 0) {
 			String temp = buffer.poll();
 			if (temp.equals("a")) {
 				insertEvent(READYEXP, time + 0.002);
-				insertEvent(ARRIVALB, time + 0.002 + expDist(1));
+				insertEvent(ARRIVALBEXP, time + 0.002 + expDist(1));
 			} else {
 				insertEvent(READYEXP, time + 0.004);
+			}
+		}
+	}
+
+	private void arrivalAPrioA() {
+		if (numberInQueue == 0)
+			insertEvent(READYPRIOA, time + 0.002);
+		numberInQueue++;
+		buffer.addLast("a");
+		insertEvent(ARRIVALAPRIOA, time + expDist((double) 1 / 150));
+	}
+
+	private void arrivalBPrioA() {
+		if (numberInQueue == 0)
+			insertEvent(READYPRIOA, time + 0.004);
+		numberInQueue++;
+		buffer.addFirst("b");
+	}
+
+	private void readyPrioA() {
+		numberInQueue--;
+		if (numberInQueue > 0) {
+			String temp = buffer.poll();
+			if (temp.equals("a")) {
+				insertEvent(READYPRIOA, time + 0.002);
+				insertEvent(ARRIVALBPRIOA, time + 0.002 + 1.0);
+			} else {
+				insertEvent(READYPRIOA, time + 0.004);
 			}
 		}
 	}

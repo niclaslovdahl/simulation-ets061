@@ -5,7 +5,7 @@ import java.nio.file.Path;
 public class MainSimulation extends GlobalSimulation {
 
 	public static void simulate(int noServers, int serviceTime, double interarrival, double timeMeasurements,
-			String fileName) throws FileNotFoundException, UnsupportedEncodingException {
+			int totalNoMeasurements, String fileName) throws FileNotFoundException, UnsupportedEncodingException {
 
 		Event actEvent;
 		State actState = new State(); // The state that shoud be used
@@ -20,7 +20,7 @@ public class MainSimulation extends GlobalSimulation {
 		actState.timeMeasurements = timeMeasurements;
 
 		// The main simulation loop
-		while (actState.noMeasurements < 1000) {
+		while (actState.noMeasurements < totalNoMeasurements) {
 			actEvent = eventList.fetchEvent();
 			time = actEvent.eventTime;
 			actState.treatEvent(actEvent);
@@ -40,6 +40,11 @@ public class MainSimulation extends GlobalSimulation {
 	}
 
 	public static void main(String[] args) throws IOException {
-		simulate(1000, 100, (double) 1 / 8, 1, "4.1.txt");
+		// simulate(1000, 100, (double) 1 / 8, 1, 1000, "4.1.txt");
+		// simulate(1000, 10, (double) 1 / 80, 1, 1000, "4.2.txt");
+		// simulate(1000, 200, (double) 1 / 4, 1, 1000, "4.3.txt");
+		// simulate(100, 10, (double) 1 / 4, 4, 1000, "4.4.txt");
+		simulate(100, 10, (double) 1 / 4, 4, 1000, "4.5.txt");
+
 	}
 }

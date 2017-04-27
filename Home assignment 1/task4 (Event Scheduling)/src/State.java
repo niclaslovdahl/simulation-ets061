@@ -40,7 +40,7 @@ class State extends GlobalSimulation {
 			serversOccupied++;
 			insertEvent(READY, time + serviceTime);
 		}
-		insertEvent(ARRIVAL, time + interarrival);
+		insertEvent(ARRIVAL, time + expDist(interarrival));
 	}
 
 	private void ready() {
@@ -51,5 +51,9 @@ class State extends GlobalSimulation {
 		noMeasurements++;
 		noCustomers.add(Integer.toString(serversOccupied));
 		insertEvent(MEASURE, time + timeMeasurements);
+	}
+
+	private double expDist(double mean) {
+		return -(mean) * Math.log(slump.nextDouble());
 	}
 }

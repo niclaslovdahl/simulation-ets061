@@ -5,7 +5,7 @@ import java.io.*;
 
 public class MainSimulation extends Global {
 
-	public void simulate(int type) {
+	public static void simulate(int type) {
 		// The signal list is started and actSignal is declaree. actSignal is
 		// the latest signal that has been fetched from the
 		// signal list in the main loop below.
@@ -38,7 +38,10 @@ public class MainSimulation extends Global {
 
 		// To start the simulation the first signals are put in the signal list
 
+		String stringType = "";
+
 		if (type == READYRANDOM) {
+			stringType = "(Random)";
 			SignalList.SendSignal(READYRANDOM, Generator, time);
 			SignalList.SendSignal(MEASURE, Q1, time);
 			SignalList.SendSignal(MEASURE, Q2, time);
@@ -46,11 +49,26 @@ public class MainSimulation extends Global {
 			SignalList.SendSignal(MEASURE, Q4, time);
 			SignalList.SendSignal(MEASURE, Q5, time);
 		} else if (type == READYROUND) {
+			stringType = "(Round robin)";
 			SignalList.SendSignal(READYROUND, Generator, time);
 			SignalList.SendSignal(MEASURE, Q1, time);
+			SignalList.SendSignal(MEASURE, Q2, time);
+			SignalList.SendSignal(MEASURE, Q3, time);
+			SignalList.SendSignal(MEASURE, Q4, time);
+			SignalList.SendSignal(MEASURE, Q5, time);
 		} else if (type == READYPRIO) {
+			stringType = "(Prio)";
 			SignalList.SendSignal(READYPRIO, Generator, time);
 			SignalList.SendSignal(MEASURE, Q1, time);
+			SignalList.SendSignal(MEASURE, Q2, time);
+			SignalList.SendSignal(MEASURE, Q3, time);
+			SignalList.SendSignal(MEASURE, Q4, time);
+			SignalList.SendSignal(MEASURE, Q5, time);
+			Generator.queueList.add(Q1);
+			Generator.queueList.add(Q2);
+			Generator.queueList.add(Q3);
+			Generator.queueList.add(Q4);
+			Generator.queueList.add(Q5);
 		}
 
 		// This is the main loop
@@ -67,12 +85,11 @@ public class MainSimulation extends Global {
 				+ (1.0 * Q2.accumulated / Q2.noMeasurements) + (1.0 * Q3.accumulated / Q3.noMeasurements)
 				+ (1.0 * Q4.accumulated / Q4.noMeasurements) + (1.0 * Q5.accumulated / Q5.noMeasurements);
 
-		System.out.println("Mean number of customers in queuing system: " + totalNoCustomers);
+		System.out.println("Mean number of customers in queuing system " + stringType + ": " + totalNoCustomers);
 
 	}
 
 	public static void main(String[] args) throws IOException {
-		MainSimulation main = new MainSimulation();
-		main.simulate(READYRANDOM);
+		simulate(READYPRIO);
 	}
 }

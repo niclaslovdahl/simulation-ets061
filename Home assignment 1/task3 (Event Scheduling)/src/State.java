@@ -11,6 +11,8 @@ class State extends GlobalSimulation {
 
 	public double interarrival = 0;
 	public double timeSpent = 0;
+	public double noOfReady = 0;
+	public LinkedList<Double> arrivals = new LinkedList<Double>();
 
 	// The following method is called by the main program each time a new event
 	// has been fetched
@@ -43,10 +45,9 @@ class State extends GlobalSimulation {
 
 	private void arrival() {
 		numberOfArrivalsQueue1++;
+		arrivals.addLast(new Double(time));
 		if (numberInQueue1 == 0) {
-			double temp = expDist(1);
-			timeSpent += temp;
-			insertEvent(READY, time + temp);
+			insertEvent(READY, time + expDist(1));
 		}
 		insertEvent(ARRIVAL, time + expDist(interarrival));
 		numberInQueue1++;
@@ -56,24 +57,22 @@ class State extends GlobalSimulation {
 		numberInQueue1--;
 		insertEvent(ARRIVAL2, time);
 		if (numberInQueue1 > 0) {
-			double temp = expDist(1);
-			timeSpent += temp;
-			insertEvent(READY, time + temp);
+			insertEvent(READY, time + expDist(1));
 		}
 
 	}
 
 	private void arrival2() {
 		if (numberInQueue2 == 0) {
-			double temp = expDist(1);
-			timeSpent += temp;
-			insertEvent(READY2, time + temp);
+			insertEvent(READY2, time + expDist(1));
 		}
 		numberInQueue2++;
 	}
 
 	private void ready2() {
 		numberInQueue2--;
+		timeSpent += time - arrivals.poll().doubleValue();
+		noOfReady++;
 		if (numberInQueue2 > 0) {
 			double temp = expDist(1);
 			timeSpent += temp;

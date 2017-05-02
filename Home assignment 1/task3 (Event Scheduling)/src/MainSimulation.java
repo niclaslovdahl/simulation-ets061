@@ -22,6 +22,8 @@ public class MainSimulation extends GlobalSimulation {
 		System.out.println("---------- Interarrival time " + interarrival + " ----------");
 		System.out.println(
 				"Mean number of customers in queuing system: " + 1.0 * actState.accumulated / actState.noMeasurements);
+		System.out.println(
+				"Mean time a customer spends in the queuing network: " + (actState.timeSpent / actState.noOfReady));
 
 	}
 

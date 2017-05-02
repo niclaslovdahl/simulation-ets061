@@ -44,7 +44,7 @@ public class MainSimulation extends GlobalSimulation {
 		// simulate(1000, 10, (double) 1 / 80, 1, 1000, "4.2.txt");
 		// simulate(1000, 200, (double) 1 / 4, 1, 1000, "4.3.txt");
 		// simulate(100, 10, (double) 1 / 4, 4, 1000, "4.4.txt");
-		simulate(100, 10, (double) 1 / 4, 4, 1000, "4.5.txt");
-
+		// simulate(100, 10, (double) 1 / 4, 1, 4000, "4.5.txt");
+		// simulate(100, 10, (double) 1 / 4, 4, 4000, "4.6.txt");
 	}
 }

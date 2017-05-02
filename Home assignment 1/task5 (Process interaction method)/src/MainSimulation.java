@@ -1,11 +1,10 @@
-import java.util.*;
 import java.io.*;
 
 //It inherits Proc so that we can use time and the signal names without dot notation
 
 public class MainSimulation extends Global {
 
-	public static void simulate(int type) {
+	public static void simulate(int type, double interarrival) {
 		// The signal list is started and actSignal is declaree. actSignal is
 		// the latest signal that has been fetched from the
 		// signal list in the main loop below.
@@ -29,7 +28,7 @@ public class MainSimulation extends Global {
 		Q5.sendTo = null;
 
 		Gen Generator = new Gen();
-		Generator.lambda = (double) 1 / 0.12; // Uniform 0.12
+		Generator.lambda = (double) 1 / interarrival; // Uniform 0.12
 		Generator.Q1 = Q1;
 		Generator.Q2 = Q2;
 		Generator.Q3 = Q3;
@@ -85,11 +84,13 @@ public class MainSimulation extends Global {
 				+ (1.0 * Q2.accumulated / Q2.noMeasurements) + (1.0 * Q3.accumulated / Q3.noMeasurements)
 				+ (1.0 * Q4.accumulated / Q4.noMeasurements) + (1.0 * Q5.accumulated / Q5.noMeasurements);
 
-		System.out.println("Mean number of customers in queuing system " + stringType + ": " + totalNoCustomers);
+		System.out.println("---------- Interarrival time " + interarrival + " " + stringType + " ----------");
+		System.out.println("Mean number of customers in queuing system: " + totalNoCustomers);
+		System.out.println("Result using little’s theorem: " + (1 / interarrival) * (timeSpent / noOfReady));
 
 	}
 
 	public static void main(String[] args) throws IOException {
-		simulate(READYPRIO);
+		simulate(READYRANDOM, 0.11); // change values.
 	}
 }

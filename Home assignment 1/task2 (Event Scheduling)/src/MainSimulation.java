@@ -12,7 +12,7 @@ public class MainSimulation extends GlobalSimulation {
 
 		if (type == PRIOB) {
 			insertEvent(ARRIVALA, 0);
-			insertEvent(MEASURE, 5);
+			insertEvent(MEASURE, 1);
 			typeString = "(Prio B)";
 		} else if (type == EXP) {
 			insertEvent(ARRIVALAEXP, 0);
@@ -38,7 +38,7 @@ public class MainSimulation extends GlobalSimulation {
 
 	public static void main(String[] args) throws IOException {
 		simulate(PRIOB);
-		simulate(EXP);
-		simulate(PRIOA);
+		// simulate(EXP);
+		// simulate(PRIOA);
 	}
 }

@@ -6,21 +6,21 @@ public class MainSimulation extends GlobalSimulation {
 
 	public static void simulate(int type) {
 		Event actEvent;
-		State actState = new State(); // The state that shoud be used
+		State2 actState = new State2(); // The state that shoud be used
 		// Some events must be put in the event list at the beginning
 		String typeString = "";
 
 		if (type == PRIOB) {
-			insertEvent(ARRIVALA, 0);
-			insertEvent(MEASURE, 1);
+			insertEvent(ARRIVALA, 0, 0);
+			insertEvent(MEASURE, 1, 0);
 			typeString = "(Prio B)";
 		} else if (type == EXP) {
-			insertEvent(ARRIVALAEXP, 0);
-			insertEvent(MEASURE, 5);
+			insertEvent(ARRIVALAEXP, 0, 0);
+			insertEvent(MEASURE, 5, 0);
 			typeString = "(Prio A and Exp delay)";
 		} else if (type == PRIOA) {
-			insertEvent(ARRIVALAPRIOA, 0);
-			insertEvent(MEASURE, 0);
+			insertEvent(ARRIVALAPRIOA, 0, 0);
+			insertEvent(MEASURE, 0, 0);
 			typeString = "(Prio A)";
 		}
 

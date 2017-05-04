@@ -37,15 +37,15 @@ class State extends GlobalSimulation {
 
 	private void arrivalA() {
 		if (buffer.size() == 0) {
-			insertEvent(READY, time + 0.002);
+			insertEvent(READY, time + 0.002, 0);
 		}
 		buffer.addLast("a");
-		insertEvent(ARRIVALA, time + expDist((double) 1 / 150));
+		insertEvent(ARRIVALA, time + expDist((double) 1 / 150), 0);
 	}
 
 	public void arrivalB() {
 		if (buffer.size() == 0) {
-			insertEvent(READY, time + 0.004);
+			insertEvent(READY, time + 0.004, 0);
 		}
 		buffer.addFirst("b");
 	}
@@ -53,15 +53,15 @@ class State extends GlobalSimulation {
 	private void ready() {
 		String tempa = buffer.poll();
 		if (tempa.equals("a")) {
-			insertEvent(ARRIVALB, time + 1.0);
+			insertEvent(ARRIVALB, time + 1.0, 0);
 		}
 
 		if (buffer.size() > 0) {
 			String temp = buffer.peek();
 			if (temp.equals("a")) {
-				insertEvent(READY, time + 0.002);
+				insertEvent(READY, time + 0.002, 0);
 			} else {
-				insertEvent(READY, time + 0.004);
+				insertEvent(READY, time + 0.004, 0);
 			}
 		}
 	}
@@ -69,80 +69,40 @@ class State extends GlobalSimulation {
 	private void measure() {
 		accumulated = accumulated + buffer.size();
 		noMeasurements++;
-		insertEvent(MEASURE, time + 0.1);
+		insertEvent(MEASURE, time + 0.1, 0);
 	}
+
 
 	/*
-	 * private void arrival(int prio) { if (numberInQueue == 0) { if (prio == 0)
-	 * { insertEvent(READY, time + 0.002, 0); } else { insertEvent(READY, time +
-	 * 0.004, 1); } }
+	 * private void arrivalAExp() { if (numberInQueue == 0)
+	 * insertEvent(READYEXP, time + 0.002); numberInQueue++;
+	 * buffer.addFirst("a"); insertEvent(ARRIVALAEXP, time + expDist((double) 1
+	 * / 150)); }
 	 * 
-	 * if (prio == 0) { nbrOfA++; } else { nbrOfB++; } numberInQueue++;
-	 * insertEvent(ARRIVALA, time + expDist((double) 1 / 150), 0); }
+	 * private void arrivalBExp() { if (numberInQueue == 0)
+	 * insertEvent(READYEXP, time + 0.004); numberInQueue++;
+	 * buffer.addLast("b"); }
 	 * 
-	 * private void ready(int prio) { if (prio == 0) { nbrOfA--;
-	 * insertEvent(ARRIVALA, time + 1.0, 1); } else { nbrOfB--; }
+	 * private void readyExp() { numberInQueue--; if (numberInQueue > 0) {
+	 * String temp = buffer.poll(); if (temp.equals("a")) {
+	 * insertEvent(ARRIVALBEXP, time + expDist(1)); } } }
 	 * 
-	 * numberInQueue--; System.out.println(noMeasurements);
+	 * private void arrivalAPrioA() { if (numberInQueue == 0)
+	 * insertEvent(READYPRIOA, time + 0.002); numberInQueue++;
+	 * buffer.addLast("a"); insertEvent(ARRIVALAPRIOA, time + expDist((double) 1
+	 * / 150)); }
 	 * 
-	 * if (numberInQueue > 0) { if (nbrOfB > 0) { insertEvent(READY, time +
-	 * 0.004, 1); } else { insertEvent(READY, time + 0.002, 0); } } }
+	 * private void arrivalBPrioA() { if (numberInQueue == 0)
+	 * insertEvent(READYPRIOA, time + 0.004); numberInQueue++;
+	 * buffer.addFirst("b"); }
 	 * 
+	 * private void readyPrioA() { numberInQueue--; String temp = buffer.poll();
+	 * if (temp.equals("a")) { insertEvent(ARRIVALBPRIOA, time + 0.002 + 1.0); }
+	 * if (numberInQueue > 0) {
 	 * 
-	 * private void measure() { accumulated = accumulated + numberInQueue;
-	 * noMeasurements++; insertEvent(MEASURE, time + 0.1, 0); }
+	 * } }
+	 * 
 	 */
-
-	private void arrivalAExp() {
-		if (numberInQueue == 0)
-			insertEvent(READYEXP, time + 0.002);
-		numberInQueue++;
-		buffer.addFirst("a");
-		insertEvent(ARRIVALAEXP, time + expDist((double) 1 / 150));
-	}
-
-	private void arrivalBExp() {
-		if (numberInQueue == 0)
-			insertEvent(READYEXP, time + 0.004);
-		numberInQueue++;
-		buffer.addLast("b");
-	}
-
-	private void readyExp() {
-		numberInQueue--;
-		if (numberInQueue > 0) {
-			String temp = buffer.poll();
-			if (temp.equals("a")) {
-				insertEvent(ARRIVALBEXP, time + expDist(1));
-			}
-		}
-	}
-
-	private void arrivalAPrioA() {
-		if (numberInQueue == 0)
-			insertEvent(READYPRIOA, time + 0.002);
-		numberInQueue++;
-		buffer.addLast("a");
-		insertEvent(ARRIVALAPRIOA, time + expDist((double) 1 / 150));
-	}
-
-	private void arrivalBPrioA() {
-		if (numberInQueue == 0)
-			insertEvent(READYPRIOA, time + 0.004);
-		numberInQueue++;
-		buffer.addFirst("b");
-	}
-
-	private void readyPrioA() {
-		numberInQueue--;
-		String temp = buffer.poll();
-		if (temp.equals("a")) {
-			insertEvent(ARRIVALBPRIOA, time + 0.002 + 1.0);
-		}
-		if (numberInQueue > 0) {
-
-		}
-	}
 
 	private double expDist(double mean) {
 		return -(mean) * Math.log(slump.nextDouble());

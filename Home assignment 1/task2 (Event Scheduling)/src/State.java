@@ -8,6 +8,7 @@ class State extends GlobalSimulation {
 	public boolean prio;
 
 	Random slump = new Random(); // This is just a random number generator
+	public ArrayList<String> noCustomers = new ArrayList<String>();
 
 	// The following method is called by the main program each time a new event
 	// has been fetched
@@ -76,6 +77,7 @@ class State extends GlobalSimulation {
 	private void measure() {
 		accumulated = accumulated + noOfA + noOfB;
 		noMeasurements++;
+		noCustomers.add(Integer.toString(noOfA + noOfB));
 		insertEvent(MEASURE, time + 0.1);
 	}
 

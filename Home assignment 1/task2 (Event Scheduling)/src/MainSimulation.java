@@ -4,7 +4,7 @@ public class MainSimulation extends GlobalSimulation {
 
 	public static final int PRIOB = 1, EXP = 2, PRIOA = 3;
 
-	public static void simulate(int type) {
+	public static void simulate(int type, String fileName) throws FileNotFoundException, UnsupportedEncodingException {
 		Event actEvent;
 		// The state that shoud be used
 		// Some events must be put in the event list at the beginning
@@ -36,14 +36,24 @@ public class MainSimulation extends GlobalSimulation {
 			actState.treatEvent(actEvent);
 		}
 
+		File file = new File("res/" + fileName);
+		file.getParentFile().mkdirs();
+		PrintWriter pw = new PrintWriter(file, "UTF-8");
+
+		for (String s : actState.noCustomers) {
+			pw.println(s);
+		}
+
+		pw.close();
+
 		// Printing the result of the simulation, in this case a mean value
 		System.out.println("---------- Mean number of jobs " + typeString + " ----------");
 		System.out.println("Mean number of jobs in buffer: " + 1.0 * actState.accumulated / actState.noMeasurements);
 	}
 
 	public static void main(String[] args) throws IOException {
-		simulate(PRIOB);
-		simulate(EXP);
-		simulate(PRIOA);
+		simulate(PRIOB, "priob.txt");
+		simulate(EXP, "priobexp.txt");
+		simulate(PRIOA, "prioa.txt");
 	}
 }

@@ -13,10 +13,9 @@ public class EventListClass {
 	// events for the
 	// right place to put the new event.
 
-	public void InsertEvent(int type, double TimeOfEvent, int prio) {
+	public void InsertEvent(int type, double TimeOfEvent) {
 		Event dummy, predummy;
 		Event newEvent = new Event();
-		newEvent.prio = prio;
 		newEvent.eventType = type;
 		newEvent.eventTime = TimeOfEvent;
 		predummy = list;

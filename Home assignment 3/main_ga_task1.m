@@ -46,7 +46,7 @@ end
 % loadgr96();          % 96 cities
 
 % I have chosen a data file from the above list
- loadatt48();
+ loadgr96();
 
 %% prepare the distance matrix
 load('cities.mat');
@@ -54,21 +54,33 @@ xy = cities';
 
 % you should update the following code to obtain the average and 95%
 % confidence interval for each configuration of numGen
-for numGen = 100:100:2000
-    for runs = 1:15
+meanFitness = zeros(1,400);
+bestFitness = zeros(1,400);
+for numGen = 4000
+
         userConfig = struct('xy', xy, 'popSize', 200, 'numGen', numGen, 'crossProb', 0.25, 'mutProb', 0.5, 'eliteFract', 0.02);
         resultStruct = tsp_ga(userConfig);
-        
         % the best tour found by GA
         % fprintf('\nBest tour found by GA:\n');
         % resultStruct.optRoute
         
         % the distance of the best tour
-        fprintf('\n Number of generations: %d \n Run number: %d \n The distance of the best tour = %d\n',numGen, runs, resultStruct.minDist);
+        %fprintf('\n Number of generations: %d \n Run number: %d \n The distance of the best tour = %d\n',numGen, runs, resultStruct.minDist);
         
-    end
 end
 
 % Implement your plotting here, using the average and confidence interval results:
 % plots ...
+figure
+subplot(2,1,1)
+plot(resultStruct.meanFitnessResults(1,:))
+title('Average fitness of the population')
+xlabel('Generation')
+ylabel('Fitness')
+subplot(2,1,2) 
+plot(resultStruct.bestFitnessResults(1,:));
+title('Best fitness value of the population')
+xlabel('Generation')
+ylabel('Fitness')
+
 

@@ -63,22 +63,23 @@ end
 
 
 
-totalDist = zeros(1,popSize); 
+totalDist = zeros(1,popSize);
 % totalDist is the vector of distances.Each element of this vector corresponds
 % to the total distance (i.e. length) of a member of the population.
 
-
+bestFitnessResults = zeros(1,numGen);
+meanFitnessResults = zeros(1,numGen);
 
 %% Starting GA iterations. In each iteration, a new generation is created %%%%%%
 for iter = 1:numGen
     
-    % Function calcToursDistances evaluates Each population member and 
+    % Function calcToursDistances evaluates Each population member and
     % calculates the total distance of each member
     totalDist = calcToursDistances(pop, popSize, dmat, n);
     
     
     
-    % Elite selection: you should use the information in matrix totalDist 
+    % Elite selection: you should use the information in matrix totalDist
     % to select a fraction eliteFract of the best members of the current
     % population pop. Keep these elite members in matrix elitePop.
     % Your elite selection code goes here:
@@ -97,7 +98,7 @@ for iter = 1:numGen
     % Extracting elite members to elitePop
     elitePop=zeros(eliteSize,n);
     for i=1:eliteSize
-       elitePop(i,1:end)=pop(eliteIndex(i),1:end); 
+        elitePop(i,1:end)=pop(eliteIndex(i),1:end);
     end
     %%%%%%% end of elite selection %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
@@ -119,11 +120,11 @@ for iter = 1:numGen
     p = fitness./F;
     q = zeros(1,popSize);
     
-    % 4) Calculate a cumulative probability for each chromosome 
+    % 4) Calculate a cumulative probability for each chromosome
     for i=1:popSize
         temp = 0;
         for j=1:i
-        temp = temp + p(j);
+            temp = temp + p(j);
         end
         q(1,i) = temp;
     end
@@ -141,7 +142,7 @@ for iter = 1:numGen
                 if temp>q(1,i-1) && temp<=q(1,i)
                     nbrOfC = nbrOfC + 1;
                     newPop(nbrOfC,1:end) = pop(i,1:end);
-                break;
+                    break;
                 end
             end
         end
@@ -161,7 +162,7 @@ for iter = 1:numGen
     
     
     
-    % Use the updated totalDist to calculate the new fitness values and 
+    % Use the updated totalDist to calculate the new fitness values and
     % cummulative probability distribution. Your code goes here:
     % ...
     % ...
@@ -171,14 +172,14 @@ for iter = 1:numGen
     % 2) Find the total fitness of the population
     F = sum(fitness);
     % 3) Calculate the probability of a selection for each chromosome
-    p = fitness./F;  
+    p = fitness./F;
     q = zeros(1,popSize);
     
-    % 4) Calculate a cumulative probability for each chromosome 
+    % 4) Calculate a cumulative probability for each chromosome
     for i=1:popSize
         temp = 0;
         for j=1:i
-        temp = temp + p(j);
+            temp = temp + p(j);
         end
         q(1,i) = temp;
     end
@@ -196,37 +197,109 @@ for iter = 1:numGen
     % ...
     % ...
     % ...
+    % Selection of parents to crossover
+    nbrOfC = 0;
+    parentIndex = zeros(1,popSize);
+    for i=1:popSize
+        r=rand;
+        if r<crossProb
+            nbrOfC = nbrOfC + 1;
+            parentIndex(1,nbrOfC) = i;
+        end
+    end
     
+    % Check if even number
+    if mod(nbrOfC,2)
+        nbrOfC = nbrOfC - 1;
+    end
     
+    % Random parent crossover
+    
+    while nbrOfC>0
+        % Select parent 1
+        i1 = randi([1, nbrOfC]);
+        P1 = newPop(parentIndex(i1),1:end);
+        parentIndex(i1)=parentIndex(nbrOfC);
+        nbrOfC = nbrOfC - 1;
+        % Select parent 2
+        i2 = randi([1, nbrOfC]);
+        P2 = newPop(parentIndex(i2),1:end);
+        parentIndex(i2)=parentIndex(nbrOfC);
+        nbrOfC = nbrOfC - 1;
+        
+        K=floor(0.3*size(P1,2));
+        T1=P1;
+        T2=P2;
+        O=[];
+        
+        while size(T1,2)~=0
+            % Split Tl in two sub-tours T11 and T12 such that length of T11 = min {length of T1, K};
+            length=min(size(T1,2),K);
+            T11=T1(1,1:length);
+            T12=T1(1,length+1:end);
+            
+            % Append T11 to O;
+            O=[O T11];
+            
+            for i=1:size(T11,2)
+                % Update Tl by removing from it the cities in T11
+                j = 1;
+                while 1
+                    if T1(1,j)==T11(1,i)
+                        T1(j)=[];
+                    end
+                    j = j + 1;
+                    if j>size(T1,2)
+                        break; % Since matrix is getting smaller
+                    end
+                end
+                
+                % Update T2 by removing from it the cities in T11
+                j = 1;
+                while 1
+                    if T2(1,j)==T11(1,i)
+                        T2(j)=[];
+                    end
+                    j = j + 1;
+                    if j>size(T2,2)
+                        break; % Since matrix is getting smaller
+                    end
+                end
+            end
+            X=T1;
+            T1=T2;
+            T2=X;
+        end
+        offspring = O;
+        %%%%%%%%%%%%% Mutation Operator %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        r = rand();
+        if r <= mutProb
+            
+            routeInsertionPoints = sort(ceil(n*rand(1,2)));
+            I = routeInsertionPoints(1);
+            J = routeInsertionPoints(2);
+            
+            % 2-opt mutation (simply swaps two cities)
+            offspring([I J]) = offspring([J I]);
+            
+            % now, you should replace one of the parents invloved in
+            % cross-over with this mutated offspring, then update the
+            % population newPop.
+        end
+        %%%%%%%%%% End of mutation operator %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        r = randi([0, 1]);
+        
+        if r==1
+            newPop(parentIndex(i1),1:end) = offspring(1,1:end);
+        else
+            newPop(parentIndex(i2),1:end) = offspring(1,1:end);
+        end
+    end
     %%%%%%% End of cross-over operator %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     
-    
-    %%%%%%%%%%%%% Mutation Operator %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    r = rand();
-    if r <= mutProb
-        off_indx = randi([1 popSize], 1, 1); 
-        offspring = pop(off_indx, :); % replace this line of code so that the offspring
-                                      % will be the one created by the
-                                      % cross-over operation.
-       
-        routeInsertionPoints = sort(ceil(n*rand(1,2)));
-        I = routeInsertionPoints(1);
-        J = routeInsertionPoints(2);
-        
-        % 2-opt mutation (simply swaps two cities)
-        offspring([I J]) = offspring([J I]);
-        
-        % now, you should replace one of the parents invloved in
-        % cross-over with this mutated offspring, then update the
-        % population newPop.
-    end
-    
-    %%%%%%%%%% End of mutation operator %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    
-    
-    
-    % Now, it is time to replace the worst members of newPop with the elite 
+    % Now, it is time to replace the worst members of newPop with the elite
     % members you stored in matrix elitePop (see Elite selection in the begining
     % of this iteration).
     % Your code goes here:
@@ -234,19 +307,36 @@ for iter = 1:numGen
     % ...
     % ...
     % ...
+    totalDist = calcToursDistances(newPop, popSize, dmat, n);
+    worstIndex = zeros(1, eliteSize);
+    for i=1:eliteSize
+        [M,I] = max(totalDist);
+        worstIndex(i) = I;
+        totalDist(I) = 0;
+    end
+    % Replacing worst members with elite members
+    for i=1:eliteSize
+        newPop(worstIndex(i),1:end)=elitePop(i,1:end);
+    end
+    
     %%%%%%% End of elite replacement %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     
     
     % Finally, the new population newPop should become the current population.
-    % pop = newPop;    % Uncomment this line when you finished all previous
-                       % steps.
-
+    pop = newPop;    % Uncomment this line when you finished all previous
+    % steps
+    
+    totalDist = calcToursDistances(pop, popSize, dmat, n);
+    [minDist,index] = min(totalDist);
+    bestFitnessResults(1,iter) =  1/minDist;
+    fitness = 1./totalDist;
+    meanFitnessResults(1,iter) = mean(fitness);
 end
 %%%%%% End of GA ietartions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 % Now, we find the best route in the last generation (you don't need to
-% change this part). The best route is returned in optRoute, and its 
+% change this part). The best route is returned in optRoute, and its
 % distance in minDist.
 totalDist = calcToursDistances(pop, popSize, dmat, n);
 [minDist,index] = min(totalDist);
@@ -255,6 +345,8 @@ optRoute = pop(index,:);
 % Return Output (you don't need to change this part)
 if nargout
     resultStruct = struct( ...
+        'meanFitnessResults', meanFitnessResults, ...
+        'bestFitnessResults', bestFitnessResults, ...
         'optRoute',    optRoute, ...
         'minDist',     minDist);
     
